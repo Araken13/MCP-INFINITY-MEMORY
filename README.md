@@ -101,7 +101,7 @@ The server runs a lightweight background thread (**The Watcher**) that monitors 
 2. **Memory Buffer** is regenerated in <500ms.
 3. **MCP Resource** is instantly updated.
 
-See [ARCHITECTURE.md](docs/ARCHITECTURE.md) for deeper details.
+See [ARCHITECTURE.md](docs/ARCHITECTURE.md) for technical details and [COST_GUIDE.md](docs/COST_GUIDE.md) for token usage analysis.
 
 ---
 
