@@ -1,10 +1,25 @@
 # 🧠 Infinite Memory MCP Server
 
-**Zero-Latency, Full-Context Awareness for AI Agents.**
+<div align="center">
+  <img src="docs/images/banner.png" alt="Infinite Memory Banner" width="100%" />
+  
+  <br />
+  <br />
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)
-[![MCP Ready](https://img.shields.io/badge/MCP-Ready-green.svg)](https://modelcontextprotocol.io/)
+  [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+  [![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)
+  [![MCP Ready](https://img.shields.io/badge/MCP-Ready-green.svg)](https://modelcontextprotocol.io/)
+
+  <br />
+
+  <h3>Crafted with ❤️ by</h3>
+  <a href="https://github.com/Araken13">
+    <img src="https://github.com/Araken13.png" width="100px" style="border-radius: 50%; border: 4px solid #8e44ad;" alt="Araken Avatar">
+  </a>
+  <h2>✨ ARAKEN ✨</h2>
+  
+  <p><b>Zero-Latency, Full-Context Awareness for AI Agents.</b></p>
+</div>
 
 > **"Stop waiting for your AI to read files. Give it infinite memory."**
 
@@ -38,8 +53,8 @@ Traditional AI coding assistants suffer from **Cognitive Latency**: they need to
 1. **Clone the Repository:**
 
     ```bash
-    git clone https://github.com/your-username/infinite-memory-mcp.git
-    cd infinite-memory-mcp
+    git clone https://github.com/Araken13/MCP-INFINITY-MEMORY.git
+    cd MCP-INFINITY-MEMORY
     ```
 
 2. **Configure your MCP Client (e.g., Claude Desktop)**
@@ -51,7 +66,7 @@ Traditional AI coding assistants suffer from **Cognitive Latency**: they need to
         "infinite-memory": {
           "command": "python",
           "args": [
-            "/absolute/path/to/infinite-memory-mcp/src/mcp_server.py"
+            "/absolute/path/to/MCP-INFINITY-MEMORY/src/mcp_server.py"
           ]
         }
       }
