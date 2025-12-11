@@ -25,6 +25,10 @@ DEFAULT_IGNORE_EXTENSIONS = {
     ".exe", ".dll", ".so", ".bin", ".zip", ".png", ".jpg", ".jpeg", 
     ".pdf", ".pyc", ".mp4", ".mov", ".db", ".sqlite", ".iso"
 }
+DEFAULT_SENSITIVE_FILES = {
+    ".env", ".env.local", ".env.development", ".env.production",
+    "id_rsa", "id_dsa", "id_ed25519", ".pem", ".key", "secrets.json"
+}
 
 # ==================================================================================
 # CLASSE DE GESTÃO DE MEMÓRIA (CORE)
@@ -78,6 +82,10 @@ class ProjectMemory:
                 for file in files:
                     if file == "PROJECT_CONTEXT_SUMMARY.txt" or not self.is_text_file(file):
                         continue
+                    
+                    # Security Check
+                    if file in DEFAULT_SENSITIVE_FILES or any(file.endswith(ext) for ext in DEFAULT_SENSITIVE_FILES if ext.startswith(".")):
+                         continue
                         
                     file_path = os.path.join(root, file)
                     relative_path = os.path.relpath(file_path, self.root_dir)
