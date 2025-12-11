@@ -1,0 +1,58 @@
+{
+    "mcpServers": {
+        "infinite-memory": {
+            "command": "python",
+            "args": [
+                "d:\\HACKTHON\\NOVO LLM RAM INFINTO\\server.py"
+            ]
+        },
+        "filesystem": {
+            "command": "npx",
+            "args": [
+                "-y",
+                "@modelcontextprotocol/server-filesystem",
+                "C:\\Users\\renan\\OneDrive\\Área de Trabalho",
+                "d:\\HACKTHON"
+            ]
+        },
+        "git": {
+            "command": "uvx",
+            "args": [
+                "mcp-server-git",
+                "--repository",
+                "d:\\HACKTHON"
+            ]
+        },
+        "github": {
+            "command": "npx",
+            "args": [
+                "-y",
+                "@modelcontextprotocol/server-github"
+            ],
+            "env": {
+                "GITHUB_PERSONAL_ACCESS_TOKEN": "<YOUR_TOKEN>"
+            }
+        },
+        "postgres": {
+            "command": "npx",
+            "args": [
+                "-y",
+                "@modelcontextprotocol/server-postgres",
+                "postgresql://localhost/mydb"
+            ]
+        },
+        "MCP_DOCKER": {
+            "command": "docker",
+            "args": [
+                "mcp",
+                "gateway",
+                "run"
+            ],
+            "env": {
+                "LOCALAPPDATA": "C:\\Users\\renan\\AppData\\Local",
+                "ProgramData": "C:\\ProgramData",
+                "ProgramFiles": "C:\\Program Files"
+            }
+        }
+    }
+}

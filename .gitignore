@@ -1,0 +1,12 @@
+__pycache__/
+*.pyc
+env/
+venv/
+.idea/
+.vscode/
+node_modules/
+dist/
+build/
+*.egg-info/
+PROJECT_CONTEXT_SUMMARY.txt
+.DS_Store
