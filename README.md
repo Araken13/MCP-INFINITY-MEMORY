@@ -59,7 +59,16 @@ Traditional AI coding assistants suffer from **Cognitive Latency**: they need to
 
 2. **Configure your MCP Client (Claude Desktop)**
 
-    **Windows (Crucial Step):** You must use the absolute path to your python executable to avoid version conflicts.
+    **Option A: Automatic Setup (Recommended for Windows)**
+
+    We included a script that automatically configures Claude to use the correct Python path.
+
+    ```bash
+    # Make sure you are using Python 3.10+ (Recommended Python 3.14)
+    python install.py
+    ```
+
+    **Option B: Manual Setup**
 
     Edit `%APPDATA%\Claude\claude_desktop_config.json`:
 
@@ -76,9 +85,7 @@ Traditional AI coding assistants suffer from **Cognitive Latency**: they need to
     }
     ```
 
-    > **Note:** Replace `D:\\AbsolutePath\\To...` with the real path where you cloned the repo.
-
-3. **Restart Claude** and look for the 🔌 icon!
+3. **Restart Claude** and look for the 🔌 (plug) icon!
 
 ---
 
