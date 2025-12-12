@@ -44,7 +44,25 @@ class ProjectMemory:
         self.is_updating = False
         self.error_log = []
         self.ignore_dirs = DEFAULT_IGNORE_DIRS.copy()
+        self.load_gitignore()
         
+    def load_gitignore(self):
+        """Lê o arquivo .gitignore e adiciona à lista de ignorados."""
+        gitignore_path = os.path.join(self.root_dir, ".gitignore")
+        if os.path.exists(gitignore_path):
+            try:
+                with open(gitignore_path, "r", encoding="utf-8") as f:
+                    for line in f:
+                        line = line.strip()
+                        if line and not line.startswith("#"):
+                            # Remove barras finais e iniciais comuns em gitignore
+                            clean_line = line.replace("/", "")
+                            if clean_line:
+                                self.ignore_dirs.add(clean_line)
+                print(f"📄 [MCP] .gitignore carregado. Total de regras: {len(self.ignore_dirs)}", file=sys.stderr)
+            except Exception as e:
+                self.log_error(f"Erro ao ler .gitignore: {e}")
+
     def log_error(self, msg: str):
         timestamp = datetime.now().isoformat()
         err = f"[{timestamp}] {msg}"
@@ -201,8 +219,7 @@ def watcher_loop():
 @mcp.resource("project://summary")
 def get_project_summary() -> str:
     """
-    [MUITO IMPORTANTE] Retorna TODO o código e contexto do projeto concatenado.
-    Use isso no início da conversa para entender o estado atual do projeto.
+    Sempre comece a sessão lendo o recurso 'project://summary' para entender o contexto completo do projeto.
     """
     if memory.is_updating:
         return "⚠️ A memória está sendo atualizada neste momento. Aguarde 2 segundos e tente novamente para obter a versão mais recente."
@@ -226,11 +243,6 @@ def get_recent_files() -> str:
     """
     return "\n".join(memory.recent_changes) if memory.recent_changes else "(Nenhuma modificação recente detectada)"
 
-@mcp.resource("project://errors")
-def get_server_errors() -> str:
-    """
-    Retorna logs de erro do servidor de memória. Útil para debug se algo parece errado.
-    """
     if not memory.error_log:
         return "Nenhum erro registrado. Sistema saudável. ✅"
     return "\n".join(memory.error_log)
@@ -238,6 +250,22 @@ def get_server_errors() -> str:
 # ==================================================================================
 # FERRAMENTAS MCP (O que o LLM pode EXECUTAR)
 # ==================================================================================
+
+@mcp.tool()
+def read_project_summary() -> str:
+    """
+    Lê e retorna o resumo completo do projeto (código e contexto).
+    Use esta ferramenta quando o usuário pedir para 'ler o resumo' ou 'entender o projeto'.
+    """
+    return get_project_summary()
+
+@mcp.tool()
+def read_project_tree() -> str:
+    """
+    Lê e retorna a árvore de arquivos do projeto.
+    Use esta ferramenta quando o usuário pedir para 'ver a estrutura' ou 'listar arquivos'.
+    """
+    return get_project_tree()
 
 @mcp.tool()
 def ignore_folder(folder_name: str) -> str:

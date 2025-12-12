@@ -2,58 +2,50 @@
 
 ## Conceito
 
-Utilizar a infraestrutura de hardware disponível (**1TB de RAM**) para criar um Agente de IA capaz de processar contextos gigantescos com latência zero, eliminando o gargalo de leitura de disco (I/O).
+"Memória Infinita" aqui é uma **arquitetura de software**, não de hardware. O objetivo é permitir que o Agente de IA tenha acesso ao **contexto completo** do seu projeto instantaneamente, eliminando a "amnésia" comum em chatbots que esquecem arquivos não anexados.
 
-## Arquitetura Proposta
+Aproveitamos a **velocidade extrema dos SSDs modernos (NVMe)** para criar um buffer de contexto que é atualizado em tempo real. O arquivo gerado é otimizado e compacto, permitindo performance comparável à RAM.
 
-### 1. Camada de Persistência Volátil (RAMDisk)
+## Arquitetura Explicada
 
-Em vez de salvar o contexto em SSD, criaremos um **RAMDisk** (Disco Virtual na Memória RAM).
+### 1. O Buffer Otimizado (Smart Context)
 
-* **Velocidade:** > 50 GB/s (vs 3-7 GB/s do SSD).
-* **Latência:** Nanosegundos.
-* **Função:** Armazenar o `PROJECT_CONTEXT_SUMMARY.txt` e a base de conhecimento vetorial.
+Não precisamos de 1TB de RAM. O segredo é que código-fonte é texto puro e ocupa pouquíssimo espaço.
 
-### 2. Os Motores de Contexto (Scripts Python)
+* Um projeto médio com 50 arquivos pode ter apenas ~100KB.
+* Mesmo projetos grandes raramente passam de alguns MBs de código fonte puro (excluindo binários e assets).
 
-Utilizaremos versões otimizadas dos scripts que já criamos:
+O servidor mantém um "fotografia" (snapshot) desse texto compactado na memória do processo e salva um backup leve no disco (`PROJECT_CONTEXT_SUMMARY.txt`).
 
-#### A. O Coletor Instantâneo (`leitor_ram.py`)
+### 2. O Watcher Inteligente (Delta Updates)
 
-* Lê recursivamente o repositório.
-* Em vez de escrever no disco rígido, escreve diretamente no mount point da RAM (`/mnt/ramdisk/context.txt`).
-* **Melhoria:** Implementar *Watcher* de eventos de arquivo (Watchdog) para atualizar o RAMDisk apenas nos deltas (mudanças), em tempo real.
+Em vez de reler o disco inteiro a cada pergunta (o que seria lento), implementamos um **Watcher Assíncrono**:
 
-#### B. O Cérebro Local (Ollama/vLLM)
+* Ele monitora eventos do sistema de arquivos.
+* Quando você salva um arquivo no VS Code, o servidor detecta **apenas** essa mudança.
+* Ele atualiza o contexto na memória em milissegundos.
 
-* O modelo de LLM (ex: Llama-3-70B, Mixtral 8x7B) é carregado inteiramente na RAM.
-* O Agente consulta o arquivo de contexto na RAMDisk.
-* **Resultado:** O Agente "sabe" tudo sobre o projeto instantaneamente, sem delay de carregamento de contexto.
+### 3. O Fluxo de Dados
 
-## Implementação (Passos Iniciais)
+1. **User Change:** Você edita `main.py`.
+2. **Watcher:** Detecta modificação (ms).
+3. **Server:** Atualiza a variável `context_content`.
+4. **LLM Request:** O Claude pede `read_project_summary`.
+5. **Response:** O servidor entrega o texto já pronto da memória. **Zero I/O Latency** no momento da pergunta.
 
-### Passo 1: Criar RAMDisk (Linux/WSL)
+## Implementação Técnica
 
-```bash
-# Cria ponto de montagem
-sudo mkdir /mnt/ram_context
+### Componentes
 
-# Monta 10GB de RAM como disco
-sudo mount -t tmpfs -o size=10G tmpfs /mnt/ram_context
-```
+* **MCP Server (FastMCP):** A interface padronizada que conecta com Claude/Cursor.
+* **Background Thread:** Loop infinito que verifica `os.stat` (muito leve) a cada 3s.
+* **Filtros de Segurança:** Ignora automaticamente `.env`, chaves privadas e pastas listadas no `.gitignore`.
 
-### Passo 2: Adaptar Scripts
+### Por que "Infinita"?
 
-Mover os scripts `auto_leitor.py` e `leitor_de_contexto.py` para esta pasta e configurá-los para apontar para o `Target Path` no RAMDisk.
-
-### Passo 3: Rodar Modelo
-
-```bash
-ollama run llama3:70b
-# Configurar prompt do sistema para ler sempre de /mnt/ram_context/summary.txt
-```
+Para a IA, a sensação é de memória infinita porque ela não precisa "escolher" quais arquivos ler. Ela recebe **tudo**. O limite real é apenas a "Janela de Contexto" do modelo (ex: 200k tokens no Claude 3.5 Sonnet), que é suficiente para a vasta maioria dos projetos de software inteiros.
 
 ---
-**Status:** Planejamento.
-**Hardware:** 1TB RAM Disponível.
-**Objetivo:** Zero-Latency coding assistant.
+**Status:** Produção 🚀
+**Requisito:** Python 3.10+ e um SSD (Recomendado).
+**Objetivo:** Zero-Friction Coding Assistant.

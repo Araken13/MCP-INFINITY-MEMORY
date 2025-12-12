@@ -1,0 +1,16 @@
+{
+    "isEnabled": true,
+    "userConfig": {
+        "allowed_directories": [
+            "E:\\"
+        ]
+    },
+    "mcpServers": {
+        "infinite-memory": {
+            "command": "C:\\Python314\\python.exe",
+            "args": [
+                "D:\\HACKTHON\\NOVO LLM RAM INFINTO\\src\\mcp_server.py"
+            ]
+        }
+    }
+}

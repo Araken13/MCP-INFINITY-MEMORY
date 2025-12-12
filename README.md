@@ -45,7 +45,7 @@ Traditional AI coding assistants suffer from **Cognitive Latency**: they need to
 
 ### Prerequisites
 
-* Python 3.10 or higher
+* Python 3.10 or higher (Python 3.14 Recommended for Windows)
 * `mcp` library (`pip install mcp`)
 
 ### Quick Setup
@@ -57,51 +57,63 @@ Traditional AI coding assistants suffer from **Cognitive Latency**: they need to
     cd MCP-INFINITY-MEMORY
     ```
 
-2. **Configure your MCP Client (e.g., Claude Desktop)**
-    Add the following to your config JSON:
+2. **Configure your MCP Client (Claude Desktop)**
+
+    **Windows (Crucial Step):** You must use the absolute path to your python executable to avoid version conflicts.
+
+    Edit `%APPDATA%\Claude\claude_desktop_config.json`:
 
     ```json
     {
       "mcpServers": {
         "infinite-memory": {
-          "command": "python",
+          "command": "C:\\Python314\\python.exe",
           "args": [
-            "/absolute/path/to/MCP-INFINITY-MEMORY/src/mcp_server.py"
+            "D:\\AbsolutePath\\To\\MCP-INFINITY-MEMORY\\src\\mcp_server.py"
           ]
         }
       }
     }
     ```
 
-3. **Restart Claude** and enjoy Infinite Memory! 🚀
+    > **Note:** Replace `D:\\AbsolutePath\\To...` with the real path where you cloned the repo.
+
+3. **Restart Claude** and look for the 🔌 icon!
 
 ---
 
 ## 💡 Usage
 
-In your AI chat, you now have access to powerful tools:
+In your AI chat, you now have access to powerful tools. The AI will often use them automatically, but you can also direct it:
 
-* **`@project/summary`**: Injects the *entire* up-to-date project code into the context. Best used at the start of a session.
-* **`@project/tree`**: Shows the file structure.
-* **`@project/recent`**: Shows what you were working on last.
-* **`ignore_folder(name)`**: Tell the memory to ignore specific folders (e.g., `logs`, `tmp`) to save tokens.
+* **`read_project_summary()`**: Reads the **entire** codebase context. Use this when you say: *"Read the project summary"*.
+* **`read_project_tree()`**: Shows the file structure.
+* **`ignore_folder(name)`**: Adds a folder to the ignore list (e.g., `tests`, `legacy`).
+* **`project://summary`**: (Resource) The raw text content of the project.
+* **`project://recent`**: (Resource) List of files changed in the last few minutes.
+
+### ✨ Smart Features
+
+* **Auto-Gitignore**: The server automatically reads your `.gitignore` file and excludes those files from memory. No need to worry about `node_modules` or `venv` cluttering the context.
+* **Live Watcher**: Save a file in VS Code? The memory updates instantly (<500ms).
 
 ### Pro Tip: System Prompt
 
-Add this to your AI's custom instructions:
-> "Always start the session by reading the 'project://summary' resource to understand the full project context."
+Add this to your AI's custom instructions (Project Custom Instructions):
+
+> "At the start of every session, use the `read_project_summary` tool to load the full project context into your memory."
 
 ---
 
 ## 🔧 Architecture
 
-The server runs a lightweight background thread (**The Watcher**) that monitors file system events. When you save a file in VS Code:
+The server runs a lightweight background thread (**The Watcher**) that monitors file system events. When you save a file:
 
 1. **Watcher** detects the change (Delta).
-2. **Memory Buffer** is regenerated in <500ms.
-3. **MCP Resource** is instantly updated.
+2. **Memory Buffer** is regenerated efficiently.
+3. **MCP Interface** exposes the new state immediately.
 
-See [ARCHITECTURE.md](docs/ARCHITECTURE.md) for technical details and [COST_GUIDE.md](docs/COST_GUIDE.md) for token usage analysis.
+See [ARCHITECTURE.md](docs/ARCHITECTURE.md) for technical details.
 
 ---
 
